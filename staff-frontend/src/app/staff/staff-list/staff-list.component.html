@@ -1,0 +1,125 @@
+<div class="container">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+    <div class="page-title" style="margin-bottom:0">👥 Staff Management</div>
+    <button class="btn btn-success" (click)="openAddModal()">+ Add Staff</button>
+  </div>
+
+  <!-- Success / Error alerts -->
+  <div *ngIf="successMsg" class="alert alert-success">✅ {{ successMsg }}</div>
+  <div *ngIf="error" class="alert alert-danger">⚠️ {{ error }}</div>
+
+  <!-- Search & Filter Card -->
+  <div class="card">
+    <h2>🔍 Search & Filter</h2>
+    <div class="form-row" style="margin-bottom:12px;">
+      <div class="form-group" style="margin-bottom:0">
+        <label>Search by Name</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" [(ngModel)]="searchName" placeholder="Enter staff name..." (keyup.enter)="searchByNameFromServer()" />
+          <button class="btn btn-primary" (click)="searchByNameFromServer()">Search</button>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label>Filter by Department ID</label>
+        <div style="display:flex; gap:8px;">
+          <input type="number" [(ngModel)]="filterDeptId" placeholder="Dept ID..." min="1" />
+          <button class="btn btn-primary" (click)="filterByDept()">Filter</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="margin-bottom:0">
+        <label>Filter by Minimum Salary</label>
+        <div style="display:flex; gap:8px;">
+          <input type="number" [(ngModel)]="filterMinSalary" placeholder="Min salary..." min="0" />
+          <button class="btn btn-primary" (click)="filterBySalary()">Filter</button>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:0; display:flex; align-items:flex-end;">
+        <button class="btn btn-secondary" (click)="clearFilters()" style="width:100%;">Clear All Filters</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Staff Table -->
+  <div class="card">
+    <h2>Staff Records <span class="badge badge-info">{{ filteredList.length }} records</span></h2>
+
+    <div *ngIf="loading" class="loading">⏳ Loading staff data...</div>
+
+    <div *ngIf="!loading">
+      <div *ngIf="filteredList.length === 0" class="empty-state">
+        No staff records found.
+      </div>
+
+      <div *ngIf="filteredList.length > 0" class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Staff ID</th>
+              <th>Staff Name</th>
+              <th>Department ID</th>
+              <th>Salary (₹)</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let staff of filteredList">
+              <td>{{ staff.staffId }}</td>
+              <td>{{ staff.staffName }}</td>
+              <td><span class="badge badge-info">Dept {{ staff.departmentId }}</span></td>
+              <td>{{ staff.salary | number:'1.2-2' }}</td>
+              <td>
+                <button class="btn btn-warning" (click)="openEditModal(staff)" style="margin-right:6px;">✏️ Edit</button>
+                <button class="btn btn-danger" (click)="openDeleteModal(staff)">🗑️ Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add / Edit Modal -->
+<div class="modal-overlay" *ngIf="showModal">
+  <div class="modal-box">
+    <h3>{{ isEditMode ? '✏️ Edit Staff' : '➕ Add New Staff' }}</h3>
+
+    <div *ngIf="modalError" class="alert alert-danger">{{ modalError }}</div>
+
+    <div class="form-group">
+      <label>Staff Name <span style="color:red">*</span></label>
+      <input type="text" [(ngModel)]="formData.staffName" placeholder="Enter full name" />
+    </div>
+
+    <div class="form-group">
+      <label>Department ID <span style="color:red">*</span></label>
+      <input type="number" [(ngModel)]="formData.departmentId" placeholder="e.g. 101" min="1" />
+    </div>
+
+    <div class="form-group">
+      <label>Salary (₹) <span style="color:red">*</span></label>
+      <input type="number" [(ngModel)]="formData.salary" placeholder="e.g. 50000" min="1" />
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" (click)="showModal = false">Cancel</button>
+      <button class="btn btn-success" (click)="saveStaff()">{{ isEditMode ? 'Update' : 'Add Staff' }}</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" *ngIf="showDeleteModal">
+  <div class="modal-box">
+    <h3>🗑️ Confirm Delete</h3>
+    <p style="margin-bottom:16px; color:#555;">
+      Are you sure you want to delete <strong>{{ deletingName }}</strong>? This action cannot be undone.
+    </p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" (click)="showDeleteModal = false">Cancel</button>
+      <button class="btn btn-danger" (click)="confirmDelete()">Yes, Delete</button>
+    </div>
+  </div>
+</div>

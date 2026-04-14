@@ -1,0 +1,14 @@
+<div *ngIf="keycloak.isLoggedIn()" class="navbar">
+  <span class="brand">📋 Staff Management System</span>
+  <nav>
+    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/staff" routerLinkActive="active">Staff</a>
+    <a routerLink="/profiles" routerLinkActive="active">Profiles</a>
+    <a href="#" (click)="logout(); $event.preventDefault()"
+       style="background:rgba(255,0,0,0.3)">
+      Logout ({{ keycloak.getUsername() }})
+    </a>
+  </nav>
+</div>
+
+<router-outlet></router-outlet>
