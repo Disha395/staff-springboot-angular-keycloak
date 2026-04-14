@@ -1,0 +1,26 @@
+{
+  "realm": "staff-realm",
+  "enabled": true,
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "rememberMe": true,
+  "clients": [
+    {
+      "clientId": "staff-frontend-client",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": ["http://localhost:4200/*", "http://localhost/*"],
+      "webOrigins": ["http://localhost:4200", "http://localhost"],
+      "rootUrl": "http://localhost:4200",
+      "baseUrl": "http://localhost:4200"
+    }
+  ],
+  "roles": {
+    "realm": [
+      { "name": "user", "description": "Regular user" }
+    ]
+  },
+  "defaultRoles": ["user"]
+}
