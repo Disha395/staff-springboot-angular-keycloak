@@ -120,32 +120,47 @@ export class StaffListComponent implements OnInit {
 
   // ---- Save (create or update) ----
   saveStaff() {
-    if (!this.formData.staffName.trim()) { this.modalError = 'Staff name is required.'; return; }
-    if (!this.formData.departmentId || this.formData.departmentId <= 0) { this.modalError = 'Department ID must be positive.'; return; }
-    if (!this.formData.salary || this.formData.salary <= 0) { this.modalError = 'Salary must be positive.'; return; }
-
-    this.modalError = '';
-
-    if (this.isEditMode && this.editingId !== null) {
-      this.staffService.updateStaff(this.editingId, this.formData).subscribe({
-        next: () => {
-          this.showModal = false;
-          this.showSuccess('Staff updated successfully!');
-          this.loadAll();
-        },
-        error: (err) => { this.modalError = err?.error?.message || 'Update failed.'; }
-      });
-    } else {
-      this.staffService.createStaff(this.formData).subscribe({
-        next: () => {
-          this.showModal = false;
-          this.showSuccess('Staff added successfully!');
-          this.loadAll();
-        },
-        error: (err) => { this.modalError = err?.error?.message || 'Create failed.'; }
-      });
-    }
+  if (!this.formData.staffName || this.formData.staffName.trim().length < 3) {
+    this.modalError = 'Name must be at least 3 characters.';
+    return;
   }
+
+  if (!this.formData.departmentId || this.formData.departmentId <= 0) {
+    this.modalError = 'Department ID must be valid.';
+    return;
+  }
+
+  if (!this.formData.salary || this.formData.salary <= 0) {
+    this.modalError = 'Salary must be greater than 0.';
+    return;
+  }
+
+  this.modalError = '';
+
+  if (this.isEditMode && this.editingId !== null) {
+    this.staffService.updateStaff(this.editingId, this.formData).subscribe({
+      next: () => {
+        this.showModal = false;
+        this.showSuccess('Staff updated successfully!');
+        this.loadAll();
+      },
+      error: (err) => {
+        this.modalError = err?.error?.message || 'Update failed.';
+      }
+    });
+  } else {
+    this.staffService.createStaff(this.formData).subscribe({
+      next: () => {
+        this.showModal = false;
+        this.showSuccess('Staff added successfully!');
+        this.loadAll();
+      },
+      error: (err) => {
+        this.modalError = err?.error?.message || 'Create failed.';
+      }
+    });
+  }
+}
 
   // ---- Delete ----
   openDeleteModal(staff: Staff) {

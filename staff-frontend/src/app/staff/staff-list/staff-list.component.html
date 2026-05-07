@@ -15,14 +15,32 @@
       <div class="form-group" style="margin-bottom:0">
         <label>Search by Name</label>
         <div style="display:flex; gap:8px;">
-          <input type="text" [(ngModel)]="searchName" placeholder="Enter staff name..." (keyup.enter)="searchByNameFromServer()" />
+          <input type="text"
+       [(ngModel)]="formData.staffName"
+       placeholder="Enter full name"
+       required
+       minlength="3"
+       #nameRef="ngModel" />
+
+<div *ngIf="nameRef.invalid && nameRef.touched" style="color:red; font-size:12px;">
+  Name must be at least 3 characters
+</div>
           <button class="btn btn-primary" (click)="searchByNameFromServer()">Search</button>
         </div>
       </div>
       <div class="form-group" style="margin-bottom:0">
         <label>Filter by Department ID</label>
         <div style="display:flex; gap:8px;">
-          <input type="number" [(ngModel)]="filterDeptId" placeholder="Dept ID..." min="1" />
+          <input type="number"
+       [(ngModel)]="formData.departmentId"
+       placeholder="e.g. 101"
+       min="1"
+       required
+       #deptRef="ngModel" />
+
+<div *ngIf="deptRef.invalid && deptRef.touched" style="color:red; font-size:12px;">
+  Department ID must be positive
+</div>
           <button class="btn btn-primary" (click)="filterByDept()">Filter</button>
         </div>
       </div>
@@ -31,7 +49,16 @@
       <div class="form-group" style="margin-bottom:0">
         <label>Filter by Minimum Salary</label>
         <div style="display:flex; gap:8px;">
-          <input type="number" [(ngModel)]="filterMinSalary" placeholder="Min salary..." min="0" />
+          <input type="number"
+       [(ngModel)]="formData.salary"
+       placeholder="e.g. 50000"
+       min="1"
+       required
+       #salaryRef="ngModel" />
+
+<div *ngIf="salaryRef.invalid && salaryRef.touched" style="color:red; font-size:12px;">
+  Salary must be greater than 0
+</div>
           <button class="btn btn-primary" (click)="filterBySalary()">Filter</button>
         </div>
       </div>
@@ -105,7 +132,11 @@
 
     <div class="modal-actions">
       <button class="btn btn-secondary" (click)="showModal = false">Cancel</button>
-      <button class="btn btn-success" (click)="saveStaff()">{{ isEditMode ? 'Update' : 'Add Staff' }}</button>
+      <button class="btn btn-success"
+        (click)="saveStaff()"
+        [disabled]="!formData.staffName || formData.salary <= 0">
+  {{ isEditMode ? 'Update' : 'Add Staff' }}
+</button>
     </div>
   </div>
 </div>
