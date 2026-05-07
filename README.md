@@ -4,7 +4,7 @@ A full-stack Staff Management System built with Angular, Spring Boot, PostgreSQL
 
 ---
 
-## Tech Stack
+``## Tech Stack
 
 | Layer | Technology |
 |---|---|
