@@ -120,8 +120,32 @@ export class StaffListComponent implements OnInit {
 
   // ---- Save (create or update) ----
   saveStaff() {
-  if (!this.formData.staffName || this.formData.staffName.trim().length < 3) {
+  const name = this.formData.staffName?.trim();
+
+  if (!name) {
+    this.modalError = 'Staff name is required.';
+    return;
+  }
+
+  if (name.length < 3) {
     this.modalError = 'Name must be at least 3 characters.';
+    return;
+  }
+
+  const namePattern = /^[A-Za-z ]+$/;
+  if (!namePattern.test(name)) {
+    this.modalError = 'Name must contain only letters and spaces.';
+    return;
+  }
+
+  // keep rest same ↓↓↓
+  if (!this.formData.departmentId || this.formData.departmentId <= 0) {
+    this.modalError = 'Department ID must be valid.';
+    return;
+  }
+
+  if (!this.formData.salary || this.formData.salary <= 0) {
+    this.modalError = 'Salary must be greater than 0.';
     return;
   }
 
