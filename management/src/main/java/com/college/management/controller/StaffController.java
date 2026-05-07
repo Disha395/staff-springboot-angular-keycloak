@@ -20,6 +20,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+//audit
+import com.college.management.service.AuditLogService;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 @RestController
 @RequestMapping("/api/staff")
 
@@ -30,6 +35,9 @@ public class StaffController {
 
     @Autowired
     private StaffService staffService;
+
+    @Autowired
+private AuditLogService auditLogService;
 
     // ==================== GET ALL STAFF ====================
     @Operation(summary = "Get all staff members",
@@ -72,6 +80,17 @@ public class StaffController {
             @Valid @RequestBody Staff staff) {
         logger.info("Creating new staff: {}", staff.getStaffName());
         Staff createdStaff = staffService.createStaff(staff);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+String adminName = auth.getName();
+
+auditLogService.saveLog(
+        adminName,
+        "ADDED STAFF",
+        createdStaff.getStaffName()
+);
+
         return new ResponseEntity<>(createdStaff, HttpStatus.CREATED);
     }
 
@@ -90,6 +109,17 @@ public class StaffController {
             @Valid @RequestBody Staff staff) {
         logger.info("Updating staff with ID: {}", id);
         Staff updatedStaff = staffService.updateStaff(id, staff);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+String adminName = auth.getName();
+
+auditLogService.saveLog(
+        adminName,
+        "UPDATED STAFF",
+        updatedStaff.getStaffName()
+);
+
         return ResponseEntity.ok(updatedStaff);
     }
 
@@ -105,6 +135,21 @@ public class StaffController {
             @Parameter(description = "ID of the staff member to delete", required = true)
             @PathVariable Long id) {
         logger.info("Deleting staff with ID: {}", id);
+
+        Optional<Staff> staff = staffService.getStaffById(id);
+
+Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+String adminName = auth.getName();
+
+if (staff.isPresent()) {
+    auditLogService.saveLog(
+            adminName,
+            "DELETED STAFF",
+            staff.get().getStaffName()
+    );
+}
+
         staffService.deleteStaff(id);
         return ResponseEntity.noContent().build();
     }
