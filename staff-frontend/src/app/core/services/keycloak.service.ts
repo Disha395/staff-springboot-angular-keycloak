@@ -9,8 +9,8 @@ export class KeycloakService {
 
   /**
    * Called once at app startup (in APP_INITIALIZER).
-   * Initialises the Keycloak adapter in check-sso mode so the app loads
-   * even when the user is not yet logged in, and redirects to Keycloak
+   * Initializes the Keycloak adapter in check-sso mode so the app loads
+   * even when the user is not yet logged in and redirects to Keycloak
    * login/register as needed.
    */
   init(): Promise<void> {
@@ -23,10 +23,10 @@ export class KeycloakService {
 
       this.keycloak
         .init({
-          onLoad: 'check-sso',              // don't force redirect on load
+          onLoad: 'check-sso',
           silentCheckSsoRedirectUri:
             window.location.origin + '/assets/silent-check-sso.html',
-          pkceMethod: 'S256'               // recommended security method
+          pkceMethod: 'S256'
         })
         .then((authenticated: boolean) => {
           console.log('Keycloak init — authenticated:', authenticated);

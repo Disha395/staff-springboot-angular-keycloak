@@ -67,6 +67,7 @@ private AuditLogService auditLogService;
         return ResponseEntity.ok(staff.get());
     }
 
+
     // ==================== CREATE NEW STAFF ====================
     @Operation(summary = "Create new staff member",
             description = "Creates a new staff member in the system")
